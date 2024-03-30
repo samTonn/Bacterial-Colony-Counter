@@ -1,0 +1,52 @@
+# Credit for code to 'Monkey see, monkey do'
+# 'Convert An Image To Grayscale or Black And White using Python & OpenCV'
+# https://www.youtube.com/watch?v=Xm7wjUKrKZA
+
+import cv2, sys
+
+# Program must be called by another program with an argument(the name of your photo). If you want this code independant, change sys.argv[1] to the name of your photo, assuming it's in the same directory
+bacterialColony = sys.argv[1]
+image = cv2.imread(bacterialColony, cv2.IMREAD_UNCHANGED)
+
+# convert image to grayscale
+image_grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# convert image to black and white.          Threshold↓    ↓Set brightness
+thresh, image_black = cv2.threshold(image_grayscale, 160, 255, cv2.THRESH_BINARY)
+# find dots/contours
+contours = cv2.findContours(image_black, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2]
+
+cv2.imwrite('Samples/image_black.png', image_black)
+
+
+## filter dots/contours by area
+minArea= 10
+maxArea = 1500
+contourList = []
+for cnt in contours:
+    if minArea < cv2.contourArea(cnt) < maxArea:
+        contourList.append(cnt)
+        # display green dots over colonies
+        image = cv2.circle(image, (cnt[0][0][0], cnt[0][0][1]), radius=3, color=(0, 255, 0), thickness=-1)
+
+# Overwrite photo to show contours found
+cv2.imwrite('Samples/bacterialColony.png', image)
+
+print(f"Number of colonies found: {len(contourList)}")
+
+
+# Write and sum number of colonies
+addHistory = open("History.txt", "a")
+addHistory.write(f'{len(contourList)}\n')
+addHistory.close()
+
+extractHistory = open("History.txt", "r")
+numberOfColonies = 0
+for colony in extractHistory.readlines():
+    numberOfColonies += int(colony)
+extractHistory.close()
+print(f'Total sum of colonies: {numberOfColonies}')
+
+writeColonies = open("Number Of Colonies.txt", "a")
+writeColonies.write(f'{numberOfColonies}\n')
+writeColonies.close()
+
