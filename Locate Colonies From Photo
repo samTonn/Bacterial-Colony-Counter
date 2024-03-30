@@ -1,0 +1,38 @@
+import cv2
+
+bacterialColony = 'BacterialColony.jpg'
+image = cv2.imread(bacterialColony, cv2.IMREAD_UNCHANGED)
+
+#convert image to grayscale
+image_grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#convert image to black and white
+thresh, image_black = cv2.threshold(image_grayscale, 180, 255, cv2.THRESH_BINARY)
+
+#find dots/contours
+contours = cv2.findContours(image_black, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2]
+print(contours)
+#store output images
+cv2.imwrite('image_black.png', image_black)
+
+## filter dots/contours by area
+minArea= 3
+maxArea = 1000
+contourList = []
+for cnt in contours:
+    if minArea < cv2.contourArea(cnt) < maxArea:
+        contourList.append(cnt)
+        # display green dots over colonies
+        image = cv2.circle(image, (cnt[0][0][0], cnt[0][0][1]), radius=3, color=(0, 255, 0), thickness=-1)
+        print((cnt[0][0][0], cnt[0][0][1]))
+        
+#display image on window
+cv2.imshow(bacterialColony, image)
+
+print("Number of colonies: {}".format(len(contourList)))
+#Dots number: 23
+
+#break out on key press
+cv2.waitKey(0)
+
+#clean up
+cv2.destroyAllWindows()
