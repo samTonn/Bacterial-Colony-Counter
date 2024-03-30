@@ -1,0 +1,29 @@
+# Credit for code to 'Roberto Diaz'
+# 'Using Watchdog to monitor a folder'
+# https://www.youtube.com/watch?v=3_0_9Rf1ouQ
+
+from time import sleep
+from subprocess import run
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+def on_created(event):
+    print('\nProcessing...')
+    run(['python', 'Bacterial Colony Counter.py', event.src_path])
+    print('Done_________________________')
+
+if __name__ == "__main__":
+    
+    event_handler = FileSystemEventHandler()
+    event_handler.on_created = on_created
+
+    path = "C:/Users/stonn/Coding/Science Fair/Samples"
+    observer = Observer()
+    observer.schedule(event_handler, path, recursive=True)
+    
+    observer.start()
+
+    print("Monitering")
+    while True:
+        sleep(1)
+
