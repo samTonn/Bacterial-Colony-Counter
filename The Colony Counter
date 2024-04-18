@@ -4,7 +4,7 @@
 
 import cv2, sys
 
-# Program must be called by another program with an argument(the name of your photo). If you want this code independant, change sys.argv[1] to the name of your photo, assuming it's in the same directory
+# Program must be called by another with an argument(the name of your photo). If you want this code independant, change sys.argv[1] to the name of your photo, assuming it's in the same directory
 bacterialColony = sys.argv[1]
 image = cv2.imread(bacterialColony, cv2.IMREAD_UNCHANGED)
 
@@ -15,7 +15,7 @@ thresh, image_black = cv2.threshold(image_grayscale, 160, 255, cv2.THRESH_BINARY
 # find dots/contours
 contours = cv2.findContours(image_black, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2]
 
-cv2.imwrite('Samples/image_black.png', image_black)
+cv2.imwrite('Black_and_White Image (Click Me).png', image_black)
 
 
 ## filter dots/contours by area
@@ -29,7 +29,7 @@ for cnt in contours:
         image = cv2.circle(image, (cnt[0][0][0], cnt[0][0][1]), radius=3, color=(0, 255, 0), thickness=-1)
 
 # Overwrite photo to show contours found
-cv2.imwrite('Samples/bacterialColony.png', image)
+cv2.imwrite('Colonies_found (Click Me).png', image)
 
 print(f"Number of colonies found: {len(contourList)}")
 
@@ -49,4 +49,3 @@ print(f'Total sum of colonies: {numberOfColonies}')
 writeColonies = open("Number Of Colonies.txt", "a")
 writeColonies.write(f'{numberOfColonies}\n')
 writeColonies.close()
-
